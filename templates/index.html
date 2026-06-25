@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Tra Cứu Điểm Thi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --red:#C0392B;--red-dk:#96281B;--gold:#D4A017;
+      --ink:#1A1A2E;--slate:#374151;--muted:#6B7280;
+      --border:#E5E7EB;--bg:#F8F7F4;--white:#FFFFFF;
+      --pass:#059669;--good:#2563EB;--warn:#D97706;--fail:#DC2626;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+
+    /* HEADER */
+    header{background:var(--red);background-image:linear-gradient(135deg,var(--red-dk) 0%,var(--red) 60%,#e74c3c 100%);position:relative;overflow:hidden}
+    header::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent 0,transparent 18px,rgba(255,255,255,.04) 18px,rgba(255,255,255,.04) 19px)}
+    .header-inner{position:relative;max-width:900px;margin:0 auto;padding:36px 24px 32px;display:flex;align-items:center;gap:18px}
+    .logo-seal{flex-shrink:0;width:60px;height:60px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 0 0 3px rgba(255,255,255,.3),0 4px 16px rgba(0,0,0,.3)}
+    .header-text{color:#fff}
+    .header-text .eyebrow{font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;opacity:.75;margin-bottom:4px}
+    .header-text h1{font-size:clamp(20px,4vw,28px);font-weight:700;line-height:1.2}
+    .header-text p{font-size:13px;opacity:.7;margin-top:4px}
+
+    /* MAIN */
+    main{max-width:900px;margin:0 auto;padding:32px 24px 64px}
+
+    /* SEARCH */
+    .search-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:24px 24px 20px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:28px}
+    .search-card label{display:block;font-size:13px;font-weight:600;color:var(--slate);margin-bottom:8px;letter-spacing:.02em}
+    .search-row{display:flex;gap:10px}
+    .search-row input{flex:1;padding:11px 16px;font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;letter-spacing:.08em;border:1.5px solid var(--border);border-radius:8px;outline:none;color:var(--ink);background:var(--bg);transition:border-color .15s,box-shadow .15s}
+    .search-row input:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(192,57,43,.12);background:var(--white)}
+    .sem-select{padding:11px 32px 11px 12px;font-family:'Be Vietnam Pro',sans-serif;font-size:13px;font-weight:500;border:1.5px solid var(--border);border-radius:8px;background:var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7280' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;cursor:pointer;outline:none;appearance:none;color:var(--ink)}
+    .sem-select:focus{border-color:var(--red)}
+    .btn-search{padding:11px 22px;background:var(--red);color:#fff;font-family:'Be Vietnam Pro',sans-serif;font-size:14px;font-weight:600;border:none;border-radius:8px;cursor:pointer;white-space:nowrap;transition:background .15s,transform .1s}
+    .btn-search:hover{background:var(--red-dk)}
+    .btn-search:active{transform:scale(.97)}
+    .hint{margin-top:10px;font-size:12px;color:var(--muted)}
+    .hint code{font-family:'JetBrains Mono',monospace;background:var(--border);padding:1px 5px;border-radius:4px;color:var(--slate)}
+
+    /* ERROR */
+    .error-box{background:#FEF2F2;border:1px solid #FECACA;border-left:4px solid var(--fail);border-radius:8px;padding:14px 18px;color:#991B1B;font-size:14px;margin-bottom:24px}
+
+    /* PROFILE */
+    .profile-bar{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:18px 22px;margin-bottom:18px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+    .profile-avatar{width:50px;height:50px;background:linear-gradient(135deg,var(--red),#e74c3c);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+    .profile-info{flex:1;min-width:160px}
+    .profile-info h2{font-size:17px;font-weight:700;color:var(--ink)}
+    .profile-meta{font-size:12px;color:var(--muted);margin-top:3px}
+    .profile-meta span{margin-right:14px}
+    .gpa-badges{display:flex;gap:10px;flex-shrink:0}
+    .gpa-badge{text-align:center;padding:10px 16px;background:var(--bg);border:1px solid var(--border);border-radius:10px;min-width:90px}
+    .gpa-badge .gpa-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;line-height:1;color:var(--ink)}
+    .gpa-badge .gpa-label{font-size:11px;color:var(--muted);margin-top:3px;letter-spacing:.04em}
+
+    /* TABLE */
+    .table-wrap{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    thead tr{background:var(--ink);color:#fff}
+    thead th{padding:11px 14px;text-align:left;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+    th.num,td.num{text-align:center}
+    tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
+    tbody tr:last-child{border-bottom:none}
+    tbody tr:hover{background:#FAFAFA}
+    td{padding:11px 14px;color:var(--slate)}
+    td.sem-col{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--muted);white-space:nowrap}
+    td.subject-name{font-weight:500;color:var(--ink);max-width:280px}
+    td.score-cell{text-align:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px}
+    .score-pass{color:var(--pass)}.score-good{color:var(--good)}.score-warn{color:var(--warn)}.score-fail{color:var(--fail)}
+
+    .chip{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace}
+    .chip-pass{background:#D1FAE5;color:#065F46}
+    .chip-good{background:#DBEAFE;color:#1E40AF}
+    .chip-warn{background:#FEF9C3;color:#854D0E}
+    .chip-fail{background:#FEE2E2;color:#991B1B}
+
+    .empty-state{text-align:center;padding:48px 24px;color:var(--muted);font-size:14px}
+    .empty-state .icon{font-size:36px;margin-bottom:10px}
+
+    footer{text-align:center;padding:24px;font-size:12px;color:var(--muted);border-top:1px solid var(--border)}
+
+    @media(max-width:640px){
+      .header-inner{padding:24px 16px}
+      main{padding:20px 14px 48px}
+      .search-row{flex-direction:column}
+      .gpa-badges{width:100%}
+      thead th:nth-child(2),td:nth-child(2),
+      thead th:nth-child(3),td:nth-child(3){display:none}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo-seal">🎓</div>
+    <div class="header-text">
+      <div class="eyebrow">Cổng thông tin sinh viên</div>
+      <h1>Tra Cứu Điểm Thi</h1>
+      <p>Nhập mã số sinh viên để xem kết quả học tập toàn khóa</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <div class="search-card">
+    <label for="sid">Mã số sinh viên (MSSV)</label>
+    <form method="POST" action="/">
+      <div class="search-row">
+        <input id="sid" name="student_id" type="text"
+               placeholder="VD: 2022010167" value="{{ query }}"
+               autocomplete="off" autofocus/>
+        {% if result %}
+        <select class="sem-select" name="semester" onchange="this.form.submit()">
+          <option value="">Tất cả học kỳ</option>
+          {% for sem in result.semesters_all %}
+          <option value="{{ sem }}" {% if result.semester_filter == sem %}selected{% endif %}>{{ sem }}</option>
+          {% endfor %}
+        </select>
+        {% endif %}
+        <button class="btn-search" type="submit">🔍 Tra cứu</button>
+      </div>
+    </form>
+    <p class="hint">Ví dụ: <code>2022010167</code> · <code>2022010178</code> · <code>2022010056</code></p>
+  </div>
+
+  {% if error %}
+  <div class="error-box">⚠️ {{ error }}</div>
+  {% endif %}
+
+  {% if result %}
+  {% set st = result.student %}
+
+  <div class="profile-bar">
+    <div class="profile-avatar">👤</div>
+    <div class="profile-info">
+      <h2>{{ st.name }}</h2>
+      <div class="profile-meta">
+        <span>🪪 {{ st.id }}</span>
+        {% if st.dob %}<span>🎂 {{ st.dob }}</span>{% endif %}
+        <span>🏫 {{ st.class }}</span>
+        <span>📚 {{ st.major }}</span>
+      </div>
+    </div>
+    <div class="gpa-badges">
+      <div class="gpa-badge">
+        <div class="gpa-val">{{ result.avg_10 if result.avg_10 else '—' }}</div>
+        <div class="gpa-label">GPA hệ 10</div>
+      </div>
+      <div class="gpa-badge">
+        <div class="gpa-val">{{ result.avg_4 if result.avg_4 else '—' }}</div>
+        <div class="gpa-label">GPA hệ 4</div>
+      </div>
+      <div class="gpa-badge">
+        <div class="gpa-val">{{ result.total_credits }}</div>
+        <div class="gpa-label">Tín chỉ</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Học kỳ</th>
+          <th class="num">TC</th>
+          <th>Tên môn học</th>
+          <th class="num">Điểm 10</th>
+          <th class="num">Điểm 4</th>
+          <th class="num">Xếp loại</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if result.grades %}
+          {% for g in result.grades %}
+          <tr>
+            <td class="sem-col">{{ g.semester }}</td>
+            <td class="num">{{ g.credits or '—' }}</td>
+            <td class="subject-name">{{ g.subject_name }}</td>
+            <td class="num score-cell score-{{ g.color }}">{{ g.score_10 if g.score_10 is not none else '—' }}</td>
+            <td class="num score-cell score-{{ g.color }}">{{ g.score_4 if g.score_4 is not none else '—' }}</td>
+            <td class="num">
+              <span class="chip chip-{{ g.color }}">{{ g.letter or '—' }}</span>
+            </td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr><td colspan="6">
+            <div class="empty-state">
+              <div class="icon">📭</div>
+              Không có dữ liệu điểm cho học kỳ đã chọn.
+            </div>
+          </td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+</main>
+
+<footer>
+  Hệ thống tra cứu điểm thi · Flask + SQLite · {{ result.grades|length if result else '' }} bản ghi
+</footer>
+
+</body>
+</html>
